@@ -1,9 +1,13 @@
 import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Postagem } from './postagem/entities/postagem.entity';
-import { PostagemModule } from './postagem.module';
 import { Tema } from './tema/entities/tema.entity';
+import { PostagemModule } from './postagem.module';
 import { TemaModule } from './tema/services/tema.module';
+
+
 
 
 @Module({
