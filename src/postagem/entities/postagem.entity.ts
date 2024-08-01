@@ -1,13 +1,14 @@
-﻿import { IsNotEmpty } from "class-validator";
+﻿﻿import { Transform, TransformFnParams } from "class-transformer";
+import { IsNotEmpty } from "class-validator";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { Transform, TransformFnParams } from "class-transformer";
 import { Tema } from "../../tema/entities/tema.entity";
+import { Usuario } from "../../usuario/entities/usuario.entity";
 
-@Entity({name:"tb_postagens"})
-export class Postagem {
+@Entity({name: "tb_postagens"}) // Criando a Tabela
+export class Postagem{
 
-    @PrimaryGeneratedColumn()
-    id:number;
+    @PrimaryGeneratedColumn() // Chave Primária Autoincremental
+    id: number;
 
     @Transform(({ value }: TransformFnParams) => value?.trim()) // Bloquear apenas espaços em branco
     @IsNotEmpty() // Não aceitar titulo vazio
@@ -19,13 +20,17 @@ export class Postagem {
     @Column({length: 1000, nullable: false})
     texto: string;
 
-    @UpdateDateColumn() // Preenche a data e a hora automaticamente
+    @UpdateDateColumn() // A data e a hora serão preenchidas automaticamente
     data: Date;
 
+    // Muitos para Um, ou seja, Muitas postagens, possuem um tema
     @ManyToOne(() => Tema, (tema) => tema.postagem, {
-        onDelete: "CASCADE" // Indica que quando um tema for excluído, as postagens associadas serão apagadas
+        onDelete: "CASCADE"
     })
     tema: Tema;
 
-
+    @ManyToOne(() => Usuario, (usuario) => usuario.postagem, {
+        onDelete: "CASCADE"
+    })
+    usuario: Usuario;
 }

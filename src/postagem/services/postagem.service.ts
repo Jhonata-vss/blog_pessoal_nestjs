@@ -1,22 +1,24 @@
-﻿import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+﻿﻿import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
 import { DeleteResult, ILike, Repository } from "typeorm";
 import { Postagem } from "../entities/postagem.entity";
-import { InjectRepository } from "@nestjs/typeorm";
 import { TemaService } from "../../tema/services/tema.service";
 
-@Injectable() // Indica que é uma classe de serviço
-export class PostagemService {
+@Injectable()
+export class PostagemService{
+
     constructor(
         @InjectRepository(Postagem)
         private postagemRepository: Repository<Postagem>,
         private temaService: TemaService
-    ){}
+    ) {}
 
     async findAll(): Promise<Postagem[]>{
-    
+        // SELECT * FROM tb_postagens;
         return await this.postagemRepository.find({
-            relations: {
-                tema:true
+            relations:{
+                tema: true,
+                usuario: true
             }
         });
     }
@@ -27,8 +29,9 @@ export class PostagemService {
             where:{
                 id
             },
-            relations: {
-                tema:true
+            relations:{
+                tema: true,
+                usuario: true
             }
         })
 
@@ -44,8 +47,9 @@ export class PostagemService {
             where:{
                 titulo: ILike(`%${titulo}%`)
             },
-            relations: {
-                tema:true
+            relations:{
+                tema: true,
+                usuario: true
             }
         })
 
@@ -53,16 +57,14 @@ export class PostagemService {
 
     async create(postagem: Postagem): Promise<Postagem> {
 
-         // Se o usuário indicou o tema
         if(postagem.tema){
 
-            await this.temaService.findById(postagem.tema.id) // Verifica se existe um tema antes de associar alguma postagem a ele
-            
-            return await this.postagemRepository.save(postagem); // Se existir, ele salva a postagem com o tema
+            await this.temaService.findById(postagem.tema.id)
 
+            return await this.postagemRepository.save(postagem);
         }
-        // Se o usuário não indicou o tema
-        return await this.postagemRepository.save(postagem); // Se a pessoa não passar o tema, ele salva sem o tema
+
+        return await this.postagemRepository.save(postagem);
     }
 
     async update(postagem: Postagem): Promise<Postagem> {
@@ -71,16 +73,15 @@ export class PostagemService {
 
         if(!buscaPostagem || !postagem.id)
             throw new HttpException('A Postagem não foi encontrada!', HttpStatus.NOT_FOUND)
-
+        
         // Se o usuário indicou o tema
         if(postagem.tema){
-            
-            await this.temaService.findById(postagem.tema.id) // Verifica se existe um tema antes de associar alguma postagem a ele
-            
-            return await this.postagemRepository.save(postagem); // Se existir, ele salva a postagem com o tema
 
+            await this.temaService.findById(postagem.tema.id)
+
+            return await this.postagemRepository.save(postagem);
         }
-        
+
         // Se o usuário não indicou o tema
         return await this.postagemRepository.save(postagem);
 
@@ -96,4 +97,5 @@ export class PostagemService {
         return await this.postagemRepository.delete(id);
         
     }
+
 }
