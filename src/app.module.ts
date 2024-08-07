@@ -13,8 +13,8 @@ import { DevService } from './data/service/dev.service';
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRootAsync({
-      useClass: DevService,
-      //useClass: ProdService,
+      //useClass: DevService,
+      useClass: ProdService,
       imports: [ConfigModule],
     }),
     PostagemModule,
