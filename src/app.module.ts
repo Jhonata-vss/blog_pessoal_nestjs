@@ -7,12 +7,14 @@ import { ProdService } from './data/service/prod.service';
 import { PostagemModule } from './postagem/postagem.module';
 import { TemaModule } from './tema/tema.module';
 import { UsuarioModule } from './usuario/usuario.module';
+import { DevService } from './data/service/dev.service';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRootAsync({
-      useClass: ProdService,
+      useClass: DevService,
+      //useClass: ProdService,
       imports: [ConfigModule],
     }),
     PostagemModule,
